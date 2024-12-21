@@ -14,6 +14,10 @@
 #include <SoftwareSerial.h>
 // Kameramodul
 #include <Adafruit_OV7670.h>
+// Wird benötigt wegen der Funktion malloc in der Adafruit OV7670 Bibliothek
+#include <stdlib.h>
+
+
 
 //I2C Adresse Sensor vergeben
 #define BME680_I2C_ADDRESS 0x76
@@ -38,12 +42,12 @@ void setup() {
     pinMode(4,OUTPUT); // grüne LED */
 
 // BME 680 initialisieren
-    // BME680_OS_8X bedeutet, dass 8 Messungen durchgeführt werden und der Mittelwwert genommen wird.
+    // BME680_OS_8X bedeutet, dass 8 Messungen durchgeführt werden und der Mittelwert genommen wird.
     // es sind 0, 1, 2, 4, 8 und 16 Messungen pro Abfrage möglich.
     bme680.setHumidityOversampling(BME680_OS_8X);
     bme680.setPressureOversampling(BME680_OS_8X);
     bme680.setTemperatureOversampling(BME680_OS_8X);
-    // wird benötigt um Rauschen / Schwankungen im Messergenis zu glätten
+    // wird benötigt um Rauschen / Schwankungen im Messergebnis zu glätten
     // gemäss ChatGPT
     bme680.setIIRFilterSize(BME680_FILTER_SIZE_3);
 
@@ -84,7 +88,7 @@ void loop() {
         lcd.print("Verbindung nicht okay");
     }
     else {
-        lcd.print("Fehler");
+        lcd.print("Unbekannter Fehler");
     }
 
     delay(1000);
