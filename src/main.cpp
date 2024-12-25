@@ -13,7 +13,7 @@
 // Komunikation über Modem oder Bluetooth
 #include <SoftwareSerial.h>
 // Kameramodul
-#include <Adafruit_OV7670.h>
+
 // Wird benötigt wegen der Funktion malloc in der Adafruit OV7670 Bibliothek
 #include <stdlib.h>
 
@@ -27,7 +27,18 @@ Adafruit_BME680 bme680;
 // Definition welches Display verwendet wird.
 LiquidCrystal_I2C lcd(0x27,20,4);
 
+// Anschluss SIM7600g-h Modul definieren
+SoftwareSerial sim7600g(1,0);
 
+//ThingSpeak API Keys
+const char* api_key_bme680 = "VFNZDUII0ENDF526";
+
+//URL Thingspeak
+const char* url_bme680 = "https://api.thingspeak.com/update";
+
+
+//Definition Funktion Daten senden
+void sendBME680Data(float temperature, float humidity, float pressure);
 
 void setup() {
 // write your initialization code here
@@ -91,8 +102,27 @@ void loop() {
         lcd.print("Unbekannter Fehler");
     }
 
+
+    sendBME680Data(temperatur, feuchtigkeit, luftdruck);
+
+
     delay(1000);
    // millis(1000);
 
 
+}
+
+void sendBME680Data(float temperature, float humidity, float pressure) {
+    String url = String(url_bme680) + "?api_key=" + api_key_bme680 +
+                 "&field1=" + String(temperature) +
+                 "&field2=" + String(humidity) +
+                 "&field3=" + String(pressure);
+
+    sim7600g.println("AT+HTTPINIT");
+    delay(100);
+    sim7600g.println("AT+HTTPPARA=\"URL\",\"" + url + "\"");
+    delay(100);
+    sim7600g.println("AT+HTTPACTION=0");
+    delay(3000);
+    sim7600g.println("AT+HTTPTERM");
 }
