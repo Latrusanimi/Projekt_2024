@@ -15,12 +15,13 @@
 // Kameramodul
 
 // Wird benötigt wegen der Funktion malloc in der Adafruit OV7670 Bibliothek
+//include <stdatomic.h> // Fehler in der Bibliothek?
 #include <stdlib.h>
 
 
 
 //I2C Adresse Sensor vergeben
-#define BME680_I2C_ADDRESS 0x76
+#define BME680_I2C_ADDRESS 0x77
 
 Adafruit_BME680 bme680;
 
@@ -28,7 +29,7 @@ Adafruit_BME680 bme680;
 LiquidCrystal_I2C lcd(0x27,20,4);
 
 // Anschluss SIM7600g-h Modul definieren
-SoftwareSerial sim7600g(1,0);
+SoftwareSerial sim7600g(11,10);
 
 //ThingSpeak API Keys
 const char* api_key_bme680 = "VFNZDUII0ENDF526";
@@ -40,8 +41,17 @@ const char* url_bme680 = "https://api.thingspeak.com/update";
 //Definition Funktion Daten senden
 void sendBME680Data(float temperature, float humidity, float pressure);
 
+//Definition Funktion 2004 Display
+void anzeigeDisplay(float temperatur, float feuchtigkeit, float luftdruck, bool statusVerbindung);
+
+bool netzwerkTest ();
+
 void setup() {
 // write your initialization code here
+
+    sim7600g.begin(9600);
+    Wire.begin();
+
 
 // LCD initialisieren
     lcd.init();
@@ -61,55 +71,36 @@ void setup() {
     // wird benötigt um Rauschen / Schwankungen im Messergebnis zu glätten
     // gemäss ChatGPT
     bme680.setIIRFilterSize(BME680_FILTER_SIZE_3);
+    bme680.begin(BME680_I2C_ADDRESS);
 
 // Geschwindigkeit der seriellen Verbindung definieren
-    Serial.begin(115200);
+    //Serial.begin(9600);
 }
 
 void loop() {
-// write your code here
-    int verbindung = 0;
+    // write your code here
+    bme680.performReading();
+
+    bool statusVerbindung = netzwerkTest();
     float temperatur = bme680.readTemperature();
     float feuchtigkeit = bme680.readHumidity();
     float luftdruck = bme680.readPressure()/100000;
 
-// Ausgabe auf Display
-    lcd.clear();
-    // Zeile 1
-    lcd.setCursor(0, 0);
-    lcd.print("Temperatur: ");
-    lcd.print(temperatur);
-    lcd.print("°C");
-    // Zeile 2
-    lcd.setCursor(0, 1);
-    lcd.print("Feuchtigkeit: ");
-    lcd.print(feuchtigkeit);
-    lcd.print("%");
-    // Zeile 3
-    lcd.setCursor(0, 2);
-    lcd.print("Luftdruck: ");
-    lcd.print(luftdruck);
-    lcd.print(" bar");
-    // Zeile 4
-    lcd.setCursor(0, 3);
-    if (verbindung == 1) {
-        lcd.print("Verbindung okay");
-    }
-    else if (verbindung == 0) {
-        lcd.print("Verbindung nicht okay");
-    }
-    else {
-        lcd.print("Unbekannter Fehler");
-    }
+    // Ausgabe auf Display
+    anzeigeDisplay(temperatur, feuchtigkeit, luftdruck, statusVerbindung);
 
 
+
+
+    //Daten an ThingSpeak senden
     sendBME680Data(temperatur, feuchtigkeit, luftdruck);
 
+    ///lcd.setCursor(0, 0);
+    //lcd.print("TEST");
 
-    delay(1000);
-   // millis(1000);
 
-
+    delay(20000);
+    // millis(1000);
 }
 
 void sendBME680Data(float temperature, float humidity, float pressure) {
@@ -125,4 +116,61 @@ void sendBME680Data(float temperature, float humidity, float pressure) {
     sim7600g.println("AT+HTTPACTION=0");
     delay(3000);
     sim7600g.println("AT+HTTPTERM");
+}
+
+void anzeigeDisplay(float temperatur, float feuchtigkeit, float luftdruck, bool statusVerbindung) {
+    lcd.clear();
+    // Zeile 1
+    lcd.setCursor(0, 0);
+    lcd.print("Temperatur: ");
+    lcd.print(temperatur);
+    lcd.print(" C");
+    // Zeile 2
+    lcd.setCursor(0, 1);
+    lcd.print("Feuchtigkeit: ");
+    lcd.print(feuchtigkeit);
+    lcd.print(" %");
+    // Zeile 3
+    lcd.setCursor(0, 2);
+    lcd.print("Luftdruck: ");
+    lcd.print(luftdruck);
+    lcd.print(" bar");
+    // Zeile 4
+    lcd.setCursor(0, 3);
+    if (statusVerbindung) {
+        lcd.print("Verbindung gut");
+    }
+    else {
+        lcd.print("Verbindung nicht gut");
+    }
+}
+
+bool netzwerkTest () {
+    String antwort ="";
+    sim7600g.println("AT+CREG?");
+    delay(500);
+    while (sim7600g.available()) {
+        char c = sim7600g.read();
+        antwort += c;
+    }
+
+    /*lcd.clear();
+    lcd.setCursor(0, 0);
+    if (antwort.length() > 20) {
+        lcd.print(antwort.substring(0, 20));
+        lcd.setCursor(0, 1);
+        lcd.print(antwort.substring(20, 40));
+    } else {
+        lcd.print(antwort);
+    }*/
+
+    if (antwort.indexOf("+CREG:") == -1) {
+        int letztesKomma = antwort.lastIndexOf(',');
+        char status = antwort[letztesKomma + 1];
+
+        if ( status == 1 || status == 5) {
+            return true;
+        }
+    }
+    return false;
 }
