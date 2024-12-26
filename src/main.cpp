@@ -15,12 +15,12 @@
 // Kameramodul
 
 // Wird benötigt wegen der Funktion malloc in der Adafruit OV7670 Bibliothek
-//include <stdatomic.h> // Fehler in der Bibliothek?
+// include <stdatomic.h> // Fehler in der Bibliothek?
 #include <stdlib.h>
 
 
 
-//I2C Adresse Sensor vergeben
+// I2C Adresse Sensor vergeben
 #define BME680_I2C_ADDRESS 0x77
 
 Adafruit_BME680 bme680;
@@ -31,17 +31,17 @@ LiquidCrystal_I2C lcd(0x27,20,4);
 // Anschluss SIM7600g-h Modul definieren
 SoftwareSerial sim7600g(11,10);
 
-//ThingSpeak API Keys
+// ThingSpeak API Keys
 const char* api_key_bme680 = "VFNZDUII0ENDF526";
 
-//URL Thingspeak
+// URL Thingspeak
 const char* url_bme680 = "https://api.thingspeak.com/update";
 
 
-//Definition Funktion Daten senden
+// Definition Funktion Daten senden
 void sendBME680Data(float temperature, float humidity, float pressure);
 
-//Definition Funktion 2004 Display
+// Definition Funktion 2004 Display
 void anzeigeDisplay(float temperatur, float feuchtigkeit, float luftdruck, bool statusVerbindung);
 
 bool netzwerkTest ();
@@ -49,7 +49,7 @@ bool netzwerkTest ();
 void setup() {
 // write your initialization code here
 
-    sim7600g.begin(9600);
+    sim7600g.begin(115200);
     Wire.begin();
 
 
@@ -92,17 +92,15 @@ void loop() {
 
 
 
-    //Daten an ThingSpeak senden
+    // Daten an ThingSpeak senden
     sendBME680Data(temperatur, feuchtigkeit, luftdruck);
-
-    ///lcd.setCursor(0, 0);
-    //lcd.print("TEST");
 
 
     delay(20000);
-    // millis(1000);
+
 }
 
+// Funktion Daten an Server senden
 void sendBME680Data(float temperature, float humidity, float pressure) {
     String url = String(url_bme680) + "?api_key=" + api_key_bme680 +
                  "&field1=" + String(temperature) +
@@ -118,6 +116,7 @@ void sendBME680Data(float temperature, float humidity, float pressure) {
     sim7600g.println("AT+HTTPTERM");
 }
 
+// Funktion Displayanzeige
 void anzeigeDisplay(float temperatur, float feuchtigkeit, float luftdruck, bool statusVerbindung) {
     lcd.clear();
     // Zeile 1
@@ -145,6 +144,7 @@ void anzeigeDisplay(float temperatur, float feuchtigkeit, float luftdruck, bool 
     }
 }
 
+// Funktion Verbindungsstatus testen
 bool netzwerkTest () {
     String antwort ="";
     sim7600g.println("AT+CREG?");
