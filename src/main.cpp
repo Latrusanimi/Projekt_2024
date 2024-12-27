@@ -49,7 +49,7 @@ bool netzwerkTest ();
 void setup() {
 // write your initialization code here
 
-    sim7600g.begin(115200);
+    sim7600g.begin(19200);
     Wire.begin();
 
 
