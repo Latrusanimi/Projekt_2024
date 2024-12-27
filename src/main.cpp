@@ -74,7 +74,7 @@ void setup() {
     bme680.begin(BME680_I2C_ADDRESS);
 
 // Geschwindigkeit der seriellen Verbindung definieren
-    //Serial.begin(9600);
+   Serial.begin(9600);
 }
 
 void loop() {
@@ -136,12 +136,13 @@ void anzeigeDisplay(float temperatur, float feuchtigkeit, float luftdruck, bool 
     lcd.print(" bar");
     // Zeile 4
     lcd.setCursor(0, 3);
-    if (statusVerbindung) {
+    /*if (statusVerbindung) {
         lcd.print("Verbindung gut");
     }
     else {
         lcd.print("Verbindung nicht gut");
-    }
+    }*/
+    lcd.print(statusVerbindung);
 }
 
 // Funktion Verbindungsstatus testen
