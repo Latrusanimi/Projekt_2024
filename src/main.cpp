@@ -10,7 +10,7 @@
 #include <SPI.h>
 // ??? Verwendung noch unklar
 #include <Adafruit_Sensor.h>
-// Komunikation über Modem oder Bluetooth
+// Komunikation mittels Modem oder Bluetooth
 #include <SoftwareSerial.h>
 // Kameramodul
 
@@ -29,13 +29,13 @@ Adafruit_BME680 bme680;
 LiquidCrystal_I2C lcd(0x27,20,4);
 
 // Anschluss SIM7600g-h Modul definieren
-SoftwareSerial sim7600g(11,10);
+//SoftwareSerial sim7600g(11,10);
 
 // ThingSpeak API Keys
 const char* api_key_bme680 = "VFNZDUII0ENDF526";  // Sicherheitsrisiko, da API Key unverschlüssselt. in einer späteren Version anzupassen
 
 // URL Thingspeak
-const char* url_bme680 = "https://api.thingspeak.com/update";
+const char* url_bme680 = "http://api.thingspeak.com/update";
 
 
 // Definition Funktion Daten senden
@@ -49,7 +49,7 @@ bool netzwerkTest ();
 void setup() {
 // write your initialization code here
 
-    sim7600g.begin(19200);
+    //sim7600g.begin(19200);
     Wire.begin();
 
 
@@ -74,7 +74,7 @@ void setup() {
     bme680.begin(BME680_I2C_ADDRESS);
 
 // Geschwindigkeit der seriellen Verbindung definieren
-   Serial.begin(9600);
+   Serial.begin(19200);
 }
 
 void loop() {
@@ -89,7 +89,7 @@ void loop() {
     // Ausgabe auf Display
     anzeigeDisplay(temperatur, feuchtigkeit, luftdruck, statusVerbindung);
 
-    delay(5000);
+    delay(10000);
 
 
     // Daten an ThingSpeak senden
@@ -107,13 +107,32 @@ void sendBME680Data(float temperature, float humidity, float pressure) {
                  "&field2=" + String(humidity) +
                  "&field3=" + String(pressure);
 
-    sim7600g.println("AT+HTTPINIT");
-    delay(100);
-    sim7600g.println("AT+HTTPPARA=\"URL\",\"" + url + "\"");
-    delay(100);
-    sim7600g.println("AT+HTTPACTION=0");
+    // APN für Netzzugang in Modem setzen
+    //sim7600g
+    Serial.println("AT+CGDCONT=1,\"IP\",\"gprs.swisscom.ch\"");
+    delay(500);
+    //sim7600g
+    Serial.println("AT+CGATT=1");
+    delay(500);
+    //sim7600g
+    Serial.println("AT+CGACT=1,1");
+    delay(500);
+    //sim7600g
+    Serial.println("AT+HTTPPARA=\"CID\",1");
+    delay(500);
+
+    // Eigentlicher HTTP aufruf
+    //sim7600g
+    Serial.println("AT+HTTPINIT");
+    delay(500);
+    //sim7600g
+    Serial.println("AT+HTTPPARA=\"URL\",\"" + url + "\"");
+    delay(500);
+    //sim7600g
+    Serial.println("AT+HTTPACTION=0");
     delay(3000);
-    sim7600g.println("AT+HTTPTERM");
+    //sim7600g
+    Serial.println("AT+HTTPTERM");
 }
 
 // Funktion Displayanzeige
@@ -148,10 +167,11 @@ void anzeigeDisplay(float temperatur, float feuchtigkeit, float luftdruck, bool 
 // Funktion Verbindungsstatus testen
 bool netzwerkTest () {
     String antwort ="";
-    sim7600g.println("AT+CREG?");
+    //sim7600g
+    Serial.println("AT+CREG?");
     delay(500);
-    while (sim7600g.available()) {
-        char c = sim7600g.read();
+    while (/*sim7600g*/Serial.available()) {
+        char c = /*sim7600g*/Serial.read();
         antwort += c;
     }
 
@@ -171,7 +191,7 @@ bool netzwerkTest () {
         int letztesKomma = antwort.lastIndexOf(',');
         if (letztesKomma != -1 && (letztesKomma +1) < (int)antwort.length()) {
             char status = antwort[letztesKomma + 1];
-            if ( status == 1 || status == 5) {
+            if ( status == '1' || status == '5') {
                 return true;
             }
         }
