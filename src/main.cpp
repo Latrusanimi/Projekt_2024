@@ -32,7 +32,7 @@ LiquidCrystal_I2C lcd(0x27,20,4);
 SoftwareSerial sim7600g(11,10);
 
 // ThingSpeak API Keys
-const char* api_key_bme680 = "VFNZDUII0ENDF526";
+const char* api_key_bme680 = "VFNZDUII0ENDF526";  // Sicherheitsrisiko, da API Key unverschlüssselt. in einer späteren Version anzupassen
 
 // URL Thingspeak
 const char* url_bme680 = "https://api.thingspeak.com/update";
@@ -89,14 +89,14 @@ void loop() {
     // Ausgabe auf Display
     anzeigeDisplay(temperatur, feuchtigkeit, luftdruck, statusVerbindung);
 
-
+    delay(5000);
 
 
     // Daten an ThingSpeak senden
     sendBME680Data(temperatur, feuchtigkeit, luftdruck);
 
 
-    delay(20000);
+    delay(10000);
 
 }
 
@@ -165,12 +165,15 @@ bool netzwerkTest () {
         lcd.print(antwort);
     }*/
 
-    if (antwort.indexOf("+CREG:") == -1) {
+    int antwortpositiv = antwort.indexOf("+CREG:");  // Prüfen, ob die Antwort vom SIM7600g-h positiv ist
+    if (antwortpositiv != -1) {
+        // Antwort nach dem letzten Komma auswerten. ,1 bedeutet: regristriert im Heimnetzwerk. ,5 bedeutet: regristriert, roaming.
         int letztesKomma = antwort.lastIndexOf(',');
-        char status = antwort[letztesKomma + 1];
-
-        if ( status == 1 || status == 5) {
-            return true;
+        if (letztesKomma != -1 && (letztesKomma +1) < (int)antwort.length()) {
+            char status = antwort[letztesKomma + 1];
+            if ( status == 1 || status == 5) {
+                return true;
+            }
         }
     }
     return false;
