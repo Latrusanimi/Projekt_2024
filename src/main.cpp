@@ -133,12 +133,12 @@ void verbindungWlan() {
     sendAT(befehl.c_str(),"WIFI CONNECTED",10000);
     */
 
-    if(!sendAT("AT","OK",1000)) {
+    if(!sendAT("AT","OK",5000)) {
         lcd.setCursor(0,3);
         lcd.print("Keine Verbindung   ");
         return;
     }
-    if(!sendAT("AT+CWMODE=1","OK",1000)) {
+    if(!sendAT("AT+CWMODE=1","OK",5000)) {
         lcd.setCursor(0,3);
         lcd.print("Fehler WLAN Modus  ");
         return;
@@ -167,7 +167,7 @@ bool sendAT(const char* befehl, const char* antwortErwartet, unsigned long timeo
 
             if(antwort.indexOf(antwortErwartet) != -1) {
                 lcd.setCursor(0,2);
-                lcd.print("Antwort WLAN-Modul:");
+                lcd.print("Antwort WLAN-Modul: ");
                 lcd.setCursor(0,3);
                 lcd.print(antwort);
                 return true;
@@ -175,9 +175,9 @@ bool sendAT(const char* befehl, const char* antwortErwartet, unsigned long timeo
         }
     }
     lcd.setCursor(0,2);
-    lcd.print("Antwort WLAN-Modul:");
+    lcd.print("Antwort WLAN-Modul: ");
     lcd.setCursor(0,3);
-    lcd.print("ERROR 404");
+    lcd.print("ERROR 404           ");
     return false;
 }
 
@@ -189,10 +189,11 @@ void sendBME680Data(float temperature, float humidity, float pressure) {
                  "&field3=" + String(pressure);
 
     // LCD-Ausgabe
+    lcd.clear();
     lcd.setCursor(0, 3);
-    lcd.print("Sende Daten...");
+    lcd.print("Sende Daten...      ");
 
-    // AT-Befehl für HTTP-GET
+    /*// AT-Befehl für HTTP-GET
     String atCommand = String("AT+HTTPCLIENT=2,0,\"") + url + String("\",,1"); // HTTP GET Anfrage
     if (sendAT(atCommand.c_str(), "OK", 10000)) {
         lcd.setCursor(0, 3);
@@ -201,6 +202,40 @@ void sendBME680Data(float temperature, float humidity, float pressure) {
         lcd.setCursor(0, 3);
         lcd.print("Senden fehlgeschl.! ");
     }
+    */
+    // Verbindung zum Server herstellen
+    if (!sendAT("AT+CIPSTART=\"TCP\",\"api.thingspeak.com\",80", "CONNECT", 5000)) {
+        lcd.setCursor(0, 3);
+        lcd.print("No Server connection");
+        return;
+    }
+
+    // Alternative AT Commands gemäss ChatGPT
+    // HTTP-GET-Request vorbereiten
+    String getRequest = String("GET ") + url + " HTTP/1.1\r\n" +
+                        "Host: api.thingspeak.com\r\n" +
+                        "Connection: close\r\n\r\n";
+
+    // Länge des Requests berechnen und senden
+    String cipsendCommand = String("AT+CIPSEND=") + getRequest.length();
+    if (!sendAT(cipsendCommand.c_str(), ">", 5000)) {
+        lcd.setCursor(0, 3);
+        lcd.print("senden fehlgeschl.  ");
+        return;
+    }
+
+    // Sende den HTTP-Request
+    Serial.print(getRequest);
+
+    // Warten auf die Antwort
+    if (!sendAT("", "CLOSED", 10000)) {
+        lcd.setCursor(0, 3);
+        lcd.print("Fehler bei HTTP!    ");
+        return;
+    }
+
+    lcd.setCursor(0, 3);
+    lcd.print("Daten gesendet!  :) ");
 
 }
 
@@ -209,7 +244,7 @@ void anzeigeDisplay(float temperatur, float feuchtigkeit, float luftdruck, Strin
     lcd.clear();
     // Zeile 1
     lcd.setCursor(0, 0);
-    lcd.print("Temperatur: ");
+    lcd.print("Temperatur:   ");
     lcd.print(temperatur,1);
     lcd.print(" C");
     // Zeile 2
@@ -219,7 +254,7 @@ void anzeigeDisplay(float temperatur, float feuchtigkeit, float luftdruck, Strin
     lcd.print(" %");
     // Zeile 3
     lcd.setCursor(0, 2);
-    lcd.print("Luftdruck: ");
+    lcd.print("Luftdruck:   ");
     lcd.print(luftdruck,1);
     lcd.print(" bar");
     // Zeile 4
