@@ -74,7 +74,7 @@ void setup() {
     bme680.begin(BME680_I2C_ADDRESS);
 
 // Geschwindigkeit der seriellen Verbindung definieren
-   Serial.begin(19200);
+   Serial.begin(115200);
 }
 
 void loop() {
@@ -109,7 +109,7 @@ void sendBME680Data(float temperature, float humidity, float pressure) {
 
     // APN für Netzzugang in Modem setzen
     //sim7600g
-    Serial.println("AT+CGDCONT=1,\"IP\",\"gprs.swisscom.ch\"");
+    //Serial.println("AT+CGDCONT=1,\"IP\",\"gprs.swisscom.ch\"");
     delay(500);
     //sim7600g
     Serial.println("AT+CGATT=1");
@@ -168,7 +168,7 @@ void anzeigeDisplay(float temperatur, float feuchtigkeit, float luftdruck, bool 
 bool netzwerkTest () {
     String antwort ="";
     //sim7600g
-    Serial.println("AT+CREG?");
+    Serial.println("AT+CGREG?");
     delay(500);
     while (/*sim7600g*/Serial.available()) {
         char c = /*sim7600g*/Serial.read();
@@ -185,7 +185,7 @@ bool netzwerkTest () {
         lcd.print(antwort);
     }*/
 
-    int antwortpositiv = antwort.indexOf("+CREG:");  // Prüfen, ob die Antwort vom SIM7600g-h positiv ist
+    int antwortpositiv = antwort.indexOf("+CGREG:");  // Prüfen, ob die Antwort vom SIM7600g-h positiv ist
     if (antwortpositiv != -1) {
         // Antwort nach dem letzten Komma auswerten. ,1 bedeutet: regristriert im Heimnetzwerk. ,5 bedeutet: regristriert, roaming.
         int letztesKomma = antwort.lastIndexOf(',');
