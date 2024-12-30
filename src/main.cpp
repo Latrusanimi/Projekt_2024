@@ -212,15 +212,25 @@ void sendBME680Data(float temperature, float humidity, float pressure) {
 
     // Alternative AT Commands gemäss ChatGPT
     // HTTP-GET-Request vorbereiten
-    String getRequest = String("GET ") + url + " HTTP/1.1\r\n" +
+    String getRequest = String("GET /update?api_key=") + api_key_bme680 +
+                    "&field1=" + String(temperature) +
+                    "&field2=" + String(humidity) +
+                    "&field3=" + String(pressure) +
+                    " HTTP/1.1\r\n" +
+                    "Host: api.thingspeak.com\r\n" +
+                    "Connection: close\r\n\r\n";
+
+        /*String("GET ") + url + " HTTP/1.1\r\n" +
                         "Host: api.thingspeak.com\r\n" +
                         "Connection: close\r\n\r\n";
+                        */
 
     // Länge des Requests berechnen und senden
     String cipsendCommand = String("AT+CIPSEND=") + getRequest.length();
+
     if (!sendAT(cipsendCommand.c_str(), ">", 5000)) {
         lcd.setCursor(0, 3);
-        lcd.print("senden fehlgeschl.  ");
+        lcd.print("CIPSEND ERROR       ");
         return;
     }
 
