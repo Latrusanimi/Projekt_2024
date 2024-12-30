@@ -166,6 +166,7 @@ bool sendAT(const char* befehl, const char* antwortErwartet, unsigned long timeo
             antwort += c;
 
             if(antwort.indexOf(antwortErwartet) != -1) {
+                lcd.clear();
                 lcd.setCursor(0,2);
                 lcd.print("Antwort WLAN-Modul: ");
                 lcd.setCursor(0,3);
@@ -174,6 +175,7 @@ bool sendAT(const char* befehl, const char* antwortErwartet, unsigned long timeo
             }
         }
     }
+    lcd.clear();
     lcd.setCursor(0,2);
     lcd.print("Antwort WLAN-Modul: ");
     lcd.setCursor(0,3);
@@ -204,11 +206,18 @@ void sendBME680Data(float temperature, float humidity, float pressure) {
     }
     */
     // Verbindung zum Server herstellen
-    if (!sendAT("AT+CIPSTART=\"TCP\",\"api.thingspeak.com\",80", "CONNECT", 5000)) {
+    if (!sendAT("AT+CIPSTART=\"TCP\",\"52.20.21.248\",80", "CONNECT", 5000)) {
+        lcd.clear();
         lcd.setCursor(0, 3);
         lcd.print("No Server connection");
         return;
-    }
+        } else {
+            lcd.clear();
+            lcd.setCursor(0, 3);
+            lcd.print("Server connection ok");
+        }
+
+    delay(1000);
 
     // Alternative AT Commands gemäss ChatGPT
     // HTTP-GET-Request vorbereiten
@@ -220,6 +229,19 @@ void sendBME680Data(float temperature, float humidity, float pressure) {
                     "Host: api.thingspeak.com\r\n" +
                     "Connection: close\r\n\r\n";
 
+    // Verwendet für debuging
+    delay(1000);
+    lcd.clear();
+    lcd.setCursor(0, 0);
+    lcd.print("HTTP Request:       ");
+    lcd.setCursor(0, 1);
+    lcd.print(getRequest);
+    lcd.setCursor(0, 2);
+    lcd.print("Request length:     ");
+    lcd.setCursor(0, 3);
+    lcd.print(getRequest.length());
+    delay(1000);
+
         /*String("GET ") + url + " HTTP/1.1\r\n" +
                         "Host: api.thingspeak.com\r\n" +
                         "Connection: close\r\n\r\n";
@@ -228,22 +250,49 @@ void sendBME680Data(float temperature, float humidity, float pressure) {
     // Länge des Requests berechnen und senden
     String cipsendCommand = String("AT+CIPSEND=") + getRequest.length();
 
-    if (!sendAT(cipsendCommand.c_str(), ">", 5000)) {
+    if (!sendAT(cipsendCommand.c_str(), ">", 10000)) {
+        lcd.clear();
         lcd.setCursor(0, 3);
         lcd.print("CIPSEND ERROR       ");
         return;
+    } else {
+        lcd.clear();
+        lcd.setCursor(0, 3);
+        lcd.print("CIPSEND OK");
     }
+
+    delay(1000);
 
     // Sende den HTTP-Request
     Serial.print(getRequest);
 
+    delay(1000);
+
     // Warten auf die Antwort
+    if (!sendAT("","SEND OK",10000)) {
+        lcd.clear();
+        lcd.setCursor(0, 3);
+        lcd.print("SEND ERROR       ");
+        return;
+    }
+    /*
     if (!sendAT("", "CLOSED", 10000)) {
+        lcd.clear();
         lcd.setCursor(0, 3);
         lcd.print("Fehler bei HTTP!    ");
         return;
     }
+    */
 
+    // Verbindung schliessen, falls nicht automatisch
+    delay(1000);
+    if (!sendAT("AT+CIPCLOSE","ClOSED",5000)) {
+        lcd.clear();
+        lcd.setCursor(0, 3);
+        lcd.print("CLOSE ERROR         ");
+    }
+
+    lcd.clear();
     lcd.setCursor(0, 3);
     lcd.print("Daten gesendet!  :) ");
 
