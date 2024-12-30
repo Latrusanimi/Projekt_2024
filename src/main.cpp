@@ -29,8 +29,8 @@ Adafruit_BME680 bme680;
 LiquidCrystal_I2C lcd(0x27,20,4);
 
 // WLAN Daten
-const char* ssid = "HUAWEI P10 Plus 2";
-const char* password = "fdc3133fc79e";
+const char* ssid = "Projekt";
+const char* password = "C505v33p";
 
 // ThingSpeak API Keys
 const char* api_key_bme680 = "VFNZDUII0ENDF526";  // Sicherheitsrisiko, da API Key unverschlüssselt. in einer späteren Version anzupassen
@@ -90,11 +90,11 @@ void setup() {
     verbindungWlan();
 
     // Timer damit WLAN Zeit hat für Verbindungsaufbau
-    for (int i = 5; i >= 0; i--) {
+    for (int i = 60; i >= 0; i--) {
         delay(1000); // 1 Sekunde warten
-        lcd.setCursor(0, 2);
+        lcd.setCursor(0, 1);
         lcd.print("                "); // Zeile leeren
-        lcd.setCursor(0, 2);
+        lcd.setCursor(0, 1);
         lcd.print(i);
     }
     delay(1000);
@@ -127,12 +127,32 @@ void loop() {
 }
 
 void verbindungWlan() {
-    sendAT("AT","OK",1000);
+    /*sendAT("AT","OK",1000);
     sendAT("AT+CWMODE=1","OK",1000);
     String befehl = String("AT+CWJAP=\"") + String(ssid) + String("\",\"") + String(password) + String("\"");
     sendAT(befehl.c_str(),"WIFI CONNECTED",10000);
+    */
+
+    if(!sendAT("AT","OK",1000)) {
+        lcd.setCursor(0,3);
+        lcd.print("Keine Verbindung   ");
+        return;
+    }
+    if(!sendAT("AT+CWMODE=1","OK",1000)) {
+        lcd.setCursor(0,3);
+        lcd.print("Fehler WLAN Modus  ");
+        return;
+    }
+
+    String befehl = String("AT+CWJAP=\"") + ssid + "\",\"" + password + "\"";
+    if (!sendAT(befehl.c_str(), "WIFI CONNECTED", 45000)) {
+        lcd.setCursor(0,3);
+        lcd.print("WLAN nicht verbunden");
+        return;
+    }
+
     lcd.setCursor(0,3);
-    lcd.print("WLAN Verbunden");
+    lcd.print("WLAN Verbunden     ");
     }
 
 bool sendAT(const char* befehl, const char* antwortErwartet, unsigned long timeout) {
@@ -168,6 +188,19 @@ void sendBME680Data(float temperature, float humidity, float pressure) {
                  "&field2=" + String(humidity) +
                  "&field3=" + String(pressure);
 
+    // LCD-Ausgabe
+    lcd.setCursor(0, 3);
+    lcd.print("Sende Daten...");
+
+    // AT-Befehl für HTTP-GET
+    String atCommand = String("AT+HTTPCLIENT=2,0,\"") + url + String("\",,1"); // HTTP GET Anfrage
+    if (sendAT(atCommand.c_str(), "OK", 10000)) {
+        lcd.setCursor(0, 3);
+        lcd.print("Daten gesendet!  ");
+    } else {
+        lcd.setCursor(0, 3);
+        lcd.print("Senden fehlgeschl.! ");
+    }
 
 }
 
@@ -177,17 +210,17 @@ void anzeigeDisplay(float temperatur, float feuchtigkeit, float luftdruck, Strin
     // Zeile 1
     lcd.setCursor(0, 0);
     lcd.print("Temperatur: ");
-    lcd.print(temperatur);
+    lcd.print(temperatur,1);
     lcd.print(" C");
     // Zeile 2
     lcd.setCursor(0, 1);
     lcd.print("Feuchtigkeit: ");
-    lcd.print(feuchtigkeit);
+    lcd.print(feuchtigkeit,1);
     lcd.print(" %");
     // Zeile 3
     lcd.setCursor(0, 2);
     lcd.print("Luftdruck: ");
-    lcd.print(luftdruck);
+    lcd.print(luftdruck,1);
     lcd.print(" bar");
     // Zeile 4
     //lcd.setCursor(0, 3);
