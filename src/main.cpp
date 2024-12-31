@@ -47,7 +47,7 @@ bool sendAT(const char* befehl, const char* antwortErwartet, unsigned long timeo
 void sendBME680Data(float temperature, float humidity, float pressure);
 
 // Definition Funktion 2004 Display
-void anzeigeDisplay(float temperatur, float feuchtigkeit, float luftdruck, String antwortESP01);
+void anzeigeDisplay(float temperatur, float feuchtigkeit, float luftdruck);
 
 //bool netzwerkTest ();
 
@@ -110,10 +110,10 @@ void loop() {
     float temperatur = bme680.readTemperature();
     float feuchtigkeit = bme680.readHumidity();
     float luftdruck = bme680.readPressure()/100000;
-    String antwortESP01 = "";
+
 
     // Ausgabe auf Display
-    anzeigeDisplay(temperatur, feuchtigkeit, luftdruck, antwortESP01);
+    anzeigeDisplay(temperatur, feuchtigkeit, luftdruck);
 
     delay(10000);
 
@@ -185,12 +185,12 @@ bool sendAT(const char* befehl, const char* antwortErwartet, unsigned long timeo
 
 // Funktion Daten an Server senden
 void sendBME680Data(float temperature, float humidity, float pressure) {
-    String url = String(url_bme680) + "?api_key=" + api_key_bme680 +
+    /*String url = String(url_bme680) + "?api_key=" + api_key_bme680 +
                  "&field1=" + String(temperature) +
                  "&field2=" + String(humidity) +
-                 "&field3=" + String(pressure);
+                 "&field3=" + String(pressure);*/
 
-    // LCD-Ausgabe
+    // LCD-Ausgabe mit Überprüfung der Sensorwerte
     lcd.clear();
     lcd.setCursor(0, 0);
     lcd.print("T: ");
@@ -205,6 +205,25 @@ void sendBME680Data(float temperature, float humidity, float pressure) {
     lcd.print("Sende Daten...      ");
 
     delay(2000);
+
+    // Prüfung ob URL und API korrekt übernommen werden
+    lcd.clear();
+    lcd.setCursor(0, 0);
+    lcd.print(url_bme680); // Erscheint auf Zeile 1 und 3, da zu Faul Zeichen vom Zeiger umzuwandeln
+    lcd.setCursor(0, 3);
+    lcd.print(api_key_bme680);
+
+    delay(2000);
+
+    //
+    if (isnan(temperature) || isnan(humidity) || isnan(pressure)) {
+        lcd.clear();
+        lcd.setCursor(0, 1);
+        lcd.print("Daten von BME680");
+        lcd.setCursor(0, 2);
+        lcd.print("sind nicht valide");
+        return;
+    }
 
 
 
@@ -232,18 +251,26 @@ void sendBME680Data(float temperature, float humidity, float pressure) {
 
     delay(1000);
 
-    // Alternative AT Commands gemäss ChatGPT
     // HTTP-GET-Request vorbereiten
-    String getRequest = String("GET /update?api_key=") + api_key_bme680 +
-                    "&field1=" + String(temperature, 2) +
-                    "&field2=" + String(humidity, 2) +
-                    "&field3=" + String(pressure, 2) +
-                    " HTTP/1.1\r\n" +
-                    "Host: api.thingspeak.com\r\n" +
-                    "Connection: close\r\n\r\n";
+    // Get Request einzeln aufbauen, um Fehler in der Funktion zu minimieren
+    String getRequest = "GET /update?api_key=";
+    getRequest += api_key_bme680;
+    getRequest+= "&field1=";
+    getRequest+= String(temperature, 2);
+    getRequest+= "&field2=";
+    getRequest+= String(humidity, 2);
+    getRequest+= "&field3=";
+    getRequest+= String(pressure, 2);
+    getRequest+= " HTTP/1.1\r\nHost: api.thingspeak.com\r\nConnection: close\r\n\r\n";
 
-    // Verwendet für debuging
+    // Ausgabe der Adresse. Sehr schlecht auf 2004 LCD zu lesen
+    lcd.clear();
+    lcd.setCursor(0, 0);
+    lcd.print(getRequest);
+
     delay(1000);
+
+    // Verwendet für debugging
     if (getRequest.length() == 0) {
         lcd.clear();
         lcd.setCursor(0, 0);
@@ -310,7 +337,7 @@ void sendBME680Data(float temperature, float humidity, float pressure) {
     }
     */
 
-    // Verbindung schliessen, falls nicht automatisch
+    // Verbindung schliessen, falls nicht automatisch geschehen
     delay(1000);
 
     if (!sendAT("AT+CIPCLOSE","ClOSED",5000)) {
@@ -326,7 +353,7 @@ void sendBME680Data(float temperature, float humidity, float pressure) {
 }
 
 // Funktion Displayanzeige
-void anzeigeDisplay(float temperatur, float feuchtigkeit, float luftdruck, String antwortESP01) {
+void anzeigeDisplay(float temperatur, float feuchtigkeit, float luftdruck) {
     lcd.clear();
     // Zeile 1
     lcd.setCursor(0, 0);
