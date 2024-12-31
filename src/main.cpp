@@ -196,7 +196,7 @@ void sendBME680Data(float temperature, float humidity, float pressure) {
     lcd.print("T: ");
     lcd.print(temperature, 2);
     lcd.setCursor(0, 1);
-    lcd.print(" H: ");
+    lcd.print("H: ");
     lcd.print(humidity, 2);
     lcd.setCursor(0, 2);
     lcd.print("P: ");
