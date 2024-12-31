@@ -238,7 +238,7 @@ void sendBME680Data(float temperature, float humidity, float pressure) {
     }
     */
     // Verbindung zum Server herstellen
-    if (!sendAT("AT+CIPSTART=\"TCP\",\"52.20.21.248\",80", "CONNECT", 5000)) {
+    if (!sendAT("AT+CIPSTART=\"TCP\",\"api.thingspeak.com\",80", "CONNECT", 5000)) {
         lcd.clear();
         lcd.setCursor(0, 3);
         lcd.print("No Server connection");
