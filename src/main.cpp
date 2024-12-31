@@ -192,8 +192,21 @@ void sendBME680Data(float temperature, float humidity, float pressure) {
 
     // LCD-Ausgabe
     lcd.clear();
+    lcd.setCursor(0, 0);
+    lcd.print("T: ");
+    lcd.print(temperature, 2);
+    lcd.setCursor(0, 1);
+    lcd.print(" H: ");
+    lcd.print(humidity, 2);
+    lcd.setCursor(0, 2);
+    lcd.print("P: ");
+    lcd.print(pressure, 2);
     lcd.setCursor(0, 3);
     lcd.print("Sende Daten...      ");
+
+    delay(2000);
+
+
 
     /*// AT-Befehl für HTTP-GET
     String atCommand = String("AT+HTTPCLIENT=2,0,\"") + url + String("\",,1"); // HTTP GET Anfrage
@@ -222,24 +235,34 @@ void sendBME680Data(float temperature, float humidity, float pressure) {
     // Alternative AT Commands gemäss ChatGPT
     // HTTP-GET-Request vorbereiten
     String getRequest = String("GET /update?api_key=") + api_key_bme680 +
-                    "&field1=" + String(temperature) +
-                    "&field2=" + String(humidity) +
-                    "&field3=" + String(pressure) +
+                    "&field1=" + String(temperature, 2) +
+                    "&field2=" + String(humidity, 2) +
+                    "&field3=" + String(pressure, 2) +
                     " HTTP/1.1\r\n" +
                     "Host: api.thingspeak.com\r\n" +
                     "Connection: close\r\n\r\n";
 
     // Verwendet für debuging
     delay(1000);
-    lcd.clear();
-    lcd.setCursor(0, 0);
-    lcd.print("HTTP Request:       ");
-    lcd.setCursor(0, 1);
-    lcd.print(getRequest);
-    lcd.setCursor(0, 2);
-    lcd.print("Request length:     ");
-    lcd.setCursor(0, 3);
-    lcd.print(getRequest.length());
+    if (getRequest.length() == 0) {
+        lcd.clear();
+        lcd.setCursor(0, 0);
+        lcd.print("!!!Request ERROR!!! ");
+        lcd.setCursor(0, 1);
+        lcd.print("String Empty        ");
+        return;
+    } else {
+        lcd.clear();
+        lcd.setCursor(0, 0);
+        lcd.print("HTTP Request:       ");
+        lcd.setCursor(0, 1);
+        lcd.print(getRequest);
+        lcd.setCursor(0, 2);
+        lcd.print("Request length:     ");
+        lcd.setCursor(0, 3);
+        lcd.print(getRequest.length());
+    }
+
     delay(1000);
 
         /*String("GET ") + url + " HTTP/1.1\r\n" +
@@ -265,6 +288,9 @@ void sendBME680Data(float temperature, float humidity, float pressure) {
 
     // Sende den HTTP-Request
     Serial.print(getRequest);
+    lcd.clear();
+    lcd.setCursor(0, 3);
+    lcd.print("send request:       ");
 
     delay(1000);
 
@@ -286,6 +312,7 @@ void sendBME680Data(float temperature, float humidity, float pressure) {
 
     // Verbindung schliessen, falls nicht automatisch
     delay(1000);
+
     if (!sendAT("AT+CIPCLOSE","ClOSED",5000)) {
         lcd.clear();
         lcd.setCursor(0, 3);
