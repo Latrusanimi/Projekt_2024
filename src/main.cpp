@@ -145,14 +145,18 @@ void loop() {
     // Alle 60 Sekunden Daten an ThingSpeak senden
     if (millis() - zeitSenden > 59999) {
         zeitSenden = millis();
+        sendBME680Data(temperatur, feuchtigkeit, luftdruck);
 
         // Abfangen von Verbindungsunterbrüchen
+        // Wird entfernt, da obwohl korrekt, instabil
+        /*
         if (sendAT("AT+CWJAP?", "ERROR", 5000)) {
             verbindungWlan();
             sendBME680Data(temperatur, feuchtigkeit, luftdruck);
         } else {
             sendBME680Data(temperatur, feuchtigkeit, luftdruck);
         }
+        */
     }
 
 }
