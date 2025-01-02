@@ -49,10 +49,19 @@ void sendBME680Data(float temperature, float humidity, float pressure);
 // Definition Funktion 2004 Display
 void anzeigeDisplay(float temperatur, float feuchtigkeit, float luftdruck);
 
-//bool netzwerkTest ();
+bool softwareDebuggingMode = false;
+bool debuggingMode = false;
 
 void setup() {
     // write your initialization code here
+
+
+    // Debugging Mode extern forcieren
+    if (PIN5 == HIGH) {
+        debuggingMode = true;
+    } else {
+        debuggingMode = softwareDebuggingMode;
+    }
 
     //sim7600g.begin(19200);
     Wire.begin();
@@ -68,6 +77,7 @@ void setup() {
     pinMode(2,OUTPUT); // rote LED
     pinMode(3,OUTPUT); // gelbe LED
     pinMode(4,OUTPUT); // grüne LED*/
+    pinMode(5, INPUT); // Debugging Modus forcieren
 
     // BME 680 initialisieren
     // BME680_OS_8X bedeutet, dass 8 Messungen durchgeführt werden und der Mittelwert genommen wird.
@@ -114,6 +124,14 @@ void setup() {
 
 void loop() {
     // write your code here
+
+    // Debugging Mode extern forcieren
+    if (PIN5 == HIGH) {
+        debuggingMode = true;
+    } else {
+        debuggingMode = softwareDebuggingMode;
+    }
+
     bme680.performReading();
 
     //bool statusVerbindung = netzwerkTest();
@@ -174,57 +192,59 @@ bool sendAT(const char* befehl, const char* antwortErwartet, unsigned long timeo
             antwort += c;
 
             if(antwort.indexOf(antwortErwartet) != -1) {
-                // Wird für Debugging verwendet
-                /*
-                lcd.setCursor(0,2);
-                lcd.print("Antwort WLAN-Modul: ");
-                lcd.setCursor(0,3);
-                lcd.print(antwort);
-                */
+                if (debuggingMode == true) {
+                    lcd.setCursor(0,2);
+                    lcd.print("Antwort WLAN-Modul: ");
+                    lcd.setCursor(0,3);
+                    lcd.print(antwort);
+                }
                 return true;
             }
         }
     }
-    lcd.setCursor(0,2);
-    lcd.print("Antwort WLAN-Modul: ");
+
     lcd.setCursor(0,3);
-    lcd.print("ERROR 404           ");
+    lcd.print("Timeout AT command  ");
     return false;
 }
 
 // Funktion Daten an Server senden
 void sendBME680Data(float temperature, float humidity, float pressure) {
-
     // LCD-Ausgabe mit Überprüfung der Sensorwerte
-    // Ausgeklammerter Teil wird für Debugging verwendet
-    /*
-    lcd.clear();
-    lcd.setCursor(0, 0);
-    lcd.print("T: ");
-    lcd.print(temperature, 2);
-    lcd.setCursor(0, 1);
-    lcd.print("H: ");
-    lcd.print(humidity, 2);
-    lcd.setCursor(0, 2);
-    lcd.print("P: ");
-    lcd.print(pressure, 2);
-    */
+    // Wird für Debugging verwendet
+    if (debuggingMode == true) {
+        lcd.clear();
+        lcd.setCursor(0, 0);
+        lcd.print("T: ");
+        lcd.print(temperature, 2);
+        lcd.setCursor(0, 1);
+        lcd.print("H: ");
+        lcd.print(humidity, 2);
+        lcd.setCursor(0, 2);
+        lcd.print("P: ");
+        lcd.print(pressure, 2);
+    }
     lcd.setCursor(0, 3);
     lcd.print("Sende Daten...      ");
 
-    delay(4000); // Bei Debugging Wert auf 2000 anpassen
+    if (debuggingMode == true) {
+        // Bei Debugging Wert auf 2000 anpassen
+        delay(2000);
+    } else {
+        delay(4000);
+    }
 
     // Prüfung ob URL und API korrekt übernommen werden
     // Wird für Debugging verwendet
-    /*
-    lcd.clear();
-    lcd.setCursor(0, 0);
-    lcd.print(url_bme680); // Erscheint auf Zeile 1 und 3, da zu Faul Zeichen vom Zeiger umzuwandeln
-    lcd.setCursor(0, 3);
-    lcd.print(api_key_bme680);
+    if (debuggingMode == true) {
+        lcd.clear();
+        lcd.setCursor(0, 0);
+        lcd.print(url_bme680); // Erscheint auf Zeile 1 und 3, da zu Faul Zeichen vom Zeiger umzuwandeln
+        lcd.setCursor(0, 3);
+        lcd.print(api_key_bme680);
 
-    delay(2000);
-    */
+        delay(2000);
+    }
 
     // Prüfung, ob die Sensorwerte sauber übernommen wurden
     if (isnan(temperature) || isnan(humidity) || isnan(pressure)) {
@@ -243,10 +263,10 @@ void sendBME680Data(float temperature, float humidity, float pressure) {
         lcd.setCursor(0, 3);
         lcd.print("No Server connection");
         return;
-        } else {
-            lcd.setCursor(0, 3);
-            lcd.print("Server connection ok");
-        }
+    } else {
+        lcd.setCursor(0, 3);
+        lcd.print("Server connection ok");
+    }
 
     delay(1000);
 
@@ -264,11 +284,11 @@ void sendBME680Data(float temperature, float humidity, float pressure) {
 
     // Ausgabe der Adresse. Sehr schlecht auf 2004 LCD zu lesen
     // Wird für Debugging verwendet
-    /*
-    lcd.clear();
-    lcd.setCursor(0, 0);
-    lcd.print(getRequest);
-    */
+    if (debuggingMode == true) {
+        lcd.clear();
+        lcd.setCursor(0, 0);
+        lcd.print(getRequest);
+    }
 
     delay(1000);
 
@@ -280,7 +300,7 @@ void sendBME680Data(float temperature, float humidity, float pressure) {
         lcd.setCursor(0, 2);
         lcd.print("  String is Empty   ");
         return;
-    } /*else {
+    } else if (debuggingMode == true) {
         lcd.clear();
         lcd.setCursor(0, 0);
         lcd.print("HTTP Request:       ");
@@ -290,7 +310,8 @@ void sendBME680Data(float temperature, float humidity, float pressure) {
         lcd.print("Request length:     ");
         lcd.setCursor(0, 3);
         lcd.print(getRequest.length());
-    }*/
+    }
+
 
     delay(1000);
 
@@ -324,6 +345,7 @@ void sendBME680Data(float temperature, float humidity, float pressure) {
 
 
     // Verbindung schliessen, falls nicht automatisch geschehen
+    // Falls die Verbindung schon geschlossen ist, gibt der erneute Aufruf ein Timeout zurück
     delay(1000);
 
     if (!sendAT("AT+CIPCLOSE","ClOSED",5000)) {
@@ -331,6 +353,9 @@ void sendBME680Data(float temperature, float humidity, float pressure) {
         lcd.print("CLOSE ERROR         ");
     }
 
+    if (debuggingMode == true) {
+        delay(3000);
+    }
 
     lcd.setCursor(0, 3);
     lcd.print("Daten gesendet!  :) ");
