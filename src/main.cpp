@@ -8,14 +8,11 @@
 #include <Adafruit_BME680.h>
 // Kommunikation mit BME 680. Wird nur verwendet, wenn I2C nicht geht
 #include <SPI.h>
-// ??? Verwendung noch unklar
+// Gemäss Adafruit notwendig für korrekte Funktion der Adafruit_BME680 Library.
 #include <Adafruit_Sensor.h>
-// Komunikation mittels Modem oder Bluetooth
+// Serielle Kommunikation, falls weitere Geräte mit serieller Kommunikation angehängt werden.
 #include <SoftwareSerial.h>
-// Kameramodul
 
-// Wird benötigt wegen der Funktion malloc in der Adafruit OV7670 Bibliothek
-// include <stdatomic.h> // Fehler in der Bibliothek?
 #include <stdlib.h>
 
 
@@ -63,7 +60,7 @@ void setup() {
         debuggingMode = softwareDebuggingMode;
     }
 
-    //sim7600g.begin(19200);
+
     Wire.begin();
 
 
@@ -72,11 +69,12 @@ void setup() {
     lcd.backlight();
 
     // PIN Mode definieren
-    // Pins werden später benötigt
+    // LED Pins werden in einer späteren Version benötigt.
     /*
     pinMode(2,OUTPUT); // rote LED
     pinMode(3,OUTPUT); // gelbe LED
-    pinMode(4,OUTPUT); // grüne LED*/
+    pinMode(4,OUTPUT); // grüne LED
+    */
     pinMode(5, INPUT_PULLUP); // Debugging Modus forcieren
 
     // BME 680 initialisieren
@@ -141,24 +139,26 @@ void loop() {
 
     static unsigned long zeitSenden = 0;
 
-
     // Ausgabe auf Display
     anzeigeDisplay(temperatur, feuchtigkeit, luftdruck);
 
-    // delay(10000);
     // Alle 60 Sekunden Daten an ThingSpeak senden
     if (millis() - zeitSenden > 59999) {
         zeitSenden = millis();
 
-        sendBME680Data(temperatur, feuchtigkeit, luftdruck);
+        // Abfangen von Verbindungsunterbrüchen
+        if (sendAT("AT+CWJAP?", "ERROR", 5000)) {
+            verbindungWlan();
+            sendBME680Data(temperatur, feuchtigkeit, luftdruck);
+        } else {
+            sendBME680Data(temperatur, feuchtigkeit, luftdruck);
+        }
     }
-
-
-    // delay(10000);
 
 }
 
 void verbindungWlan() {
+    // WLAN Verbindung herstellen
 
     lcd.setCursor(0, 2);
     lcd.print("Status WLAN:        ");
@@ -168,6 +168,7 @@ void verbindungWlan() {
         lcd.print("Keine Verbindung    ");
         return;
     }
+
     if(!sendAT("AT+CWMODE=1","OK",5000)) {
         lcd.setCursor(0,3);
         lcd.print("Fehler im WLAN Modus");
@@ -186,6 +187,8 @@ void verbindungWlan() {
     }
 
 bool sendAT(const char* befehl, const char* antwortErwartet, unsigned long timeout) {
+    // Funktion um AT Befehle auszuführen
+
     Serial.println(befehl);
     unsigned long start = millis();
 
@@ -212,10 +215,12 @@ bool sendAT(const char* befehl, const char* antwortErwartet, unsigned long timeo
     return false;
 }
 
-// Funktion Daten an Server senden
+
 void sendBME680Data(float temperature, float humidity, float pressure) {
+    // Funktion um die gesammelten Daten an den Server zu senden
+
     // LCD-Ausgabe mit Überprüfung der Sensorwerte
-    // Wird für Debugging verwendet
+    // Die Überprüfung wird nur fürs Debugging verwendet
     if (debuggingMode == true) {
         lcd.clear();
         lcd.setCursor(0, 0);
@@ -232,7 +237,7 @@ void sendBME680Data(float temperature, float humidity, float pressure) {
     lcd.print("Sende Daten...      ");
 
     if (debuggingMode == true) {
-        // Bei Debugging Wert auf 2000 anpassen
+        // Bei Debugging Wert auf 2000 anpassen, damit das Timing stimmt.
         delay(2000);
     } else {
         delay(4000);
@@ -276,6 +281,7 @@ void sendBME680Data(float temperature, float humidity, float pressure) {
 
     // HTTP-GET-Request vorbereiten
     // Get Request einzeln aufbauen, um Fehler in der Funktion zu minimieren
+    // DO NOT TOUCH!!!
     String getRequest = "GET /update?api_key=";
     getRequest += api_key_bme680;
     getRequest+= "&field1=";
@@ -286,7 +292,7 @@ void sendBME680Data(float temperature, float humidity, float pressure) {
     getRequest+= String(pressure, 2);
     getRequest+= " HTTP/1.1\r\nHost: api.thingspeak.com\r\nConnection: close\r\n\r\n";
 
-    // Ausgabe der Adresse. Sehr schlecht auf 2004 LCD zu lesen
+    // Ausgabe des Requests. Ist sehr schlecht auf 2004 LCD zu lesen.
     // Wird für Debugging verwendet
     if (debuggingMode == true) {
         lcd.clear();
@@ -296,6 +302,7 @@ void sendBME680Data(float temperature, float humidity, float pressure) {
 
     delay(1000);
 
+    // Überprüfung auf korrekten Inhalt von getRequest. Bei Fehlern im Aufbau ist der String leer.
     // Unterer Teil wird für Debugging verwendet
     if (getRequest.length() == 0) {
         lcd.clear();
@@ -315,7 +322,6 @@ void sendBME680Data(float temperature, float humidity, float pressure) {
         lcd.setCursor(0, 3);
         lcd.print(getRequest.length());
     }
-
 
     delay(1000);
 
@@ -364,11 +370,13 @@ void sendBME680Data(float temperature, float humidity, float pressure) {
     lcd.setCursor(0, 3);
     lcd.print("Daten gesendet!  :) ");
 
+    delay(2000);
 }
 
-// Funktion Displayanzeige
+
 void anzeigeDisplay(float temperatur, float feuchtigkeit, float luftdruck) {
-    lcd.clear();
+    // Funktion der Displayanzeige
+
     // Zeile 1
     lcd.setCursor(0, 0);
     lcd.print("Temperatur:   ");
@@ -385,6 +393,6 @@ void anzeigeDisplay(float temperatur, float feuchtigkeit, float luftdruck) {
     lcd.print(luftdruck,1);
     lcd.print(" bar");
     // Zeile 4
-    //lcd.setCursor(0, 3);
-    //lcd.print();
+    lcd.setCursor(0, 3);
+    lcd.print("Sammle Daten...     ");
 }
