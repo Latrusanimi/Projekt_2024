@@ -139,14 +139,14 @@ void loop() {
     float feuchtigkeit = bme680.readHumidity();
     float luftdruck = bme680.readPressure()/100000;
 
-    unsigned long zeitSenden = millis();
+    static unsigned long zeitSenden = 0;
 
 
     // Ausgabe auf Display
     anzeigeDisplay(temperatur, feuchtigkeit, luftdruck);
 
     // delay(10000);
-    // Daten an ThingSpeak senden
+    // Alle 60 Sekunden Daten an ThingSpeak senden
     if (millis() - zeitSenden > 59999) {
         zeitSenden = millis();
 
