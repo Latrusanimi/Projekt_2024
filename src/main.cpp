@@ -57,7 +57,7 @@ void setup() {
 
 
     // Debugging Mode extern forcieren
-    if (PIN5 == HIGH) {
+    if (PIN5 == LOW) {
         debuggingMode = true;
     } else {
         debuggingMode = softwareDebuggingMode;
@@ -77,7 +77,7 @@ void setup() {
     pinMode(2,OUTPUT); // rote LED
     pinMode(3,OUTPUT); // gelbe LED
     pinMode(4,OUTPUT); // grüne LED*/
-    pinMode(5, INPUT); // Debugging Modus forcieren
+    pinMode(5, INPUT_PULLUP); // Debugging Modus forcieren
 
     // BME 680 initialisieren
     // BME680_OS_8X bedeutet, dass 8 Messungen durchgeführt werden und der Mittelwert genommen wird.
@@ -126,7 +126,7 @@ void loop() {
     // write your code here
 
     // Debugging Mode extern forcieren
-    if (PIN5 == HIGH) {
+    if (PIN5 == LOW) {
         debuggingMode = true;
     } else {
         debuggingMode = softwareDebuggingMode;
@@ -139,18 +139,22 @@ void loop() {
     float feuchtigkeit = bme680.readHumidity();
     float luftdruck = bme680.readPressure()/100000;
 
+    unsigned long zeitSenden = millis();
+
 
     // Ausgabe auf Display
     anzeigeDisplay(temperatur, feuchtigkeit, luftdruck);
 
-    delay(10000);
-
-
+    // delay(10000);
     // Daten an ThingSpeak senden
-    sendBME680Data(temperatur, feuchtigkeit, luftdruck);
+    if (millis() - zeitSenden > 59999) {
+        zeitSenden = millis();
+
+        sendBME680Data(temperatur, feuchtigkeit, luftdruck);
+    }
 
 
-    delay(10000);
+    // delay(10000);
 
 }
 
