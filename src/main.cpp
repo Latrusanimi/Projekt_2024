@@ -87,22 +87,26 @@ void setup() {
     lcd.setCursor(0,0);
     lcd.print("Initialisierung:    ");
     delay(1000);
-    verbindungWlan();
-
     // Timer damit WLAN Zeit hat für Verbindungsaufbau
-    unsigned long countdown = millis();
-    for (int i = 60; i >= 0; i--) {
-        delay(1000); // 1 Sekunde warten
-        lcd.setCursor(0, 0);
-        lcd.print("Initialisierung: ");
-        if (i >= 10) {
-            lcd.print(i);
-        } else {
-            lcd.print(" ");
-            lcd.print(i);
+    unsigned long alteZeit = 0;
+    for (int i = 60; i > 0;) {
+        if (i > 59) {
+            verbindungWlan();
         }
-
+        if (millis() - alteZeit > 999) {
+            alteZeit = millis();
+            lcd.setCursor(0, 0);
+            lcd.print("Initialisierung: ");
+            if (i >= 10) {
+                    lcd.print(i);
+            } else {
+                    lcd.print(" ");
+                    lcd.print(i);
+            }
+            i --;
+        }
     }
+
     delay(1000);
     lcd.clear();
 }
