@@ -85,17 +85,23 @@ void setup() {
 
     // Verbindungsaufbau
     lcd.setCursor(0,0);
-    lcd.print("Initialisierung");
+    lcd.print("Initialisierung:    ");
     delay(1000);
     verbindungWlan();
 
     // Timer damit WLAN Zeit hat für Verbindungsaufbau
+    unsigned long countdown = millis();
     for (int i = 60; i >= 0; i--) {
         delay(1000); // 1 Sekunde warten
-        lcd.setCursor(0, 1);
-        lcd.print("                "); // Zeile leeren
-        lcd.setCursor(0, 1);
-        lcd.print(i);
+        lcd.setCursor(0, 0);
+        lcd.print("Initialisierung: ");
+        if (i >= 10) {
+            lcd.print(i);
+        } else {
+            lcd.print(" ");
+            lcd.print(i);
+        }
+
     }
     delay(1000);
     lcd.clear();
@@ -127,20 +133,18 @@ void loop() {
 }
 
 void verbindungWlan() {
-    /*sendAT("AT","OK",1000);
-    sendAT("AT+CWMODE=1","OK",1000);
-    String befehl = String("AT+CWJAP=\"") + String(ssid) + String("\",\"") + String(password) + String("\"");
-    sendAT(befehl.c_str(),"WIFI CONNECTED",10000);
-    */
+
+    lcd.setCursor(0, 2);
+    lcd.print("Status WLAN:        ");
 
     if(!sendAT("AT","OK",5000)) {
         lcd.setCursor(0,3);
-        lcd.print("Keine Verbindung   ");
+        lcd.print("Keine Verbindung    ");
         return;
     }
     if(!sendAT("AT+CWMODE=1","OK",5000)) {
         lcd.setCursor(0,3);
-        lcd.print("Fehler WLAN Modus  ");
+        lcd.print("Fehler im WLAN Modus");
         return;
     }
 
@@ -152,7 +156,7 @@ void verbindungWlan() {
     }
 
     lcd.setCursor(0,3);
-    lcd.print("WLAN Verbunden     ");
+    lcd.print("WLAN Verbunden      ");
     }
 
 bool sendAT(const char* befehl, const char* antwortErwartet, unsigned long timeout) {
@@ -166,16 +170,17 @@ bool sendAT(const char* befehl, const char* antwortErwartet, unsigned long timeo
             antwort += c;
 
             if(antwort.indexOf(antwortErwartet) != -1) {
-                lcd.clear();
+                // Wird für Debugging verwendet
+                /*
                 lcd.setCursor(0,2);
                 lcd.print("Antwort WLAN-Modul: ");
                 lcd.setCursor(0,3);
                 lcd.print(antwort);
+                */
                 return true;
             }
         }
     }
-    lcd.clear();
     lcd.setCursor(0,2);
     lcd.print("Antwort WLAN-Modul: ");
     lcd.setCursor(0,3);
@@ -185,12 +190,10 @@ bool sendAT(const char* befehl, const char* antwortErwartet, unsigned long timeo
 
 // Funktion Daten an Server senden
 void sendBME680Data(float temperature, float humidity, float pressure) {
-    /*String url = String(url_bme680) + "?api_key=" + api_key_bme680 +
-                 "&field1=" + String(temperature) +
-                 "&field2=" + String(humidity) +
-                 "&field3=" + String(pressure);*/
 
     // LCD-Ausgabe mit Überprüfung der Sensorwerte
+    // Ausgeklammerter Teil wird für Debugging verwendet
+    /*
     lcd.clear();
     lcd.setCursor(0, 0);
     lcd.print("T: ");
@@ -201,12 +204,15 @@ void sendBME680Data(float temperature, float humidity, float pressure) {
     lcd.setCursor(0, 2);
     lcd.print("P: ");
     lcd.print(pressure, 2);
+    */
     lcd.setCursor(0, 3);
     lcd.print("Sende Daten...      ");
 
-    delay(2000);
+    delay(4000); // Bei Debugging Wert auf 2000 anpassen
 
     // Prüfung ob URL und API korrekt übernommen werden
+    // Wird für Debugging verwendet
+    /*
     lcd.clear();
     lcd.setCursor(0, 0);
     lcd.print(url_bme680); // Erscheint auf Zeile 1 und 3, da zu Faul Zeichen vom Zeiger umzuwandeln
@@ -214,37 +220,26 @@ void sendBME680Data(float temperature, float humidity, float pressure) {
     lcd.print(api_key_bme680);
 
     delay(2000);
+    */
 
-    //
+    // Prüfung, ob die Sensorwerte sauber übernommen wurden
     if (isnan(temperature) || isnan(humidity) || isnan(pressure)) {
         lcd.clear();
         lcd.setCursor(0, 1);
-        lcd.print("Daten von BME680");
+        lcd.print("  Daten von BME680  ");
         lcd.setCursor(0, 2);
-        lcd.print("sind nicht valide");
+        lcd.print(" sind nicht valide! ");
         return;
     }
 
 
 
-    /*// AT-Befehl für HTTP-GET
-    String atCommand = String("AT+HTTPCLIENT=2,0,\"") + url + String("\",,1"); // HTTP GET Anfrage
-    if (sendAT(atCommand.c_str(), "OK", 10000)) {
-        lcd.setCursor(0, 3);
-        lcd.print("Daten gesendet!  ");
-    } else {
-        lcd.setCursor(0, 3);
-        lcd.print("Senden fehlgeschl.! ");
-    }
-    */
     // Verbindung zum Server herstellen
     if (!sendAT("AT+CIPSTART=\"TCP\",\"api.thingspeak.com\",80", "CONNECT", 5000)) {
-        lcd.clear();
         lcd.setCursor(0, 3);
         lcd.print("No Server connection");
         return;
         } else {
-            lcd.clear();
             lcd.setCursor(0, 3);
             lcd.print("Server connection ok");
         }
@@ -264,21 +259,24 @@ void sendBME680Data(float temperature, float humidity, float pressure) {
     getRequest+= " HTTP/1.1\r\nHost: api.thingspeak.com\r\nConnection: close\r\n\r\n";
 
     // Ausgabe der Adresse. Sehr schlecht auf 2004 LCD zu lesen
+    // Wird für Debugging verwendet
+    /*
     lcd.clear();
     lcd.setCursor(0, 0);
     lcd.print(getRequest);
+    */
 
     delay(1000);
 
-    // Verwendet für debugging
+    // Unterer Teil wird für Debugging verwendet
     if (getRequest.length() == 0) {
         lcd.clear();
-        lcd.setCursor(0, 0);
-        lcd.print("!!!Request ERROR!!! ");
         lcd.setCursor(0, 1);
-        lcd.print("String Empty        ");
+        lcd.print("!!!Request ERROR!!! ");
+        lcd.setCursor(0, 2);
+        lcd.print("  String is Empty   ");
         return;
-    } else {
+    } /*else {
         lcd.clear();
         lcd.setCursor(0, 0);
         lcd.print("HTTP Request:       ");
@@ -288,65 +286,48 @@ void sendBME680Data(float temperature, float humidity, float pressure) {
         lcd.print("Request length:     ");
         lcd.setCursor(0, 3);
         lcd.print(getRequest.length());
-    }
+    }*/
 
     delay(1000);
-
-        /*String("GET ") + url + " HTTP/1.1\r\n" +
-                        "Host: api.thingspeak.com\r\n" +
-                        "Connection: close\r\n\r\n";
-                        */
 
     // Länge des Requests berechnen und senden
     String cipsendCommand = String("AT+CIPSEND=") + getRequest.length();
 
     if (!sendAT(cipsendCommand.c_str(), ">", 10000)) {
-        lcd.clear();
         lcd.setCursor(0, 3);
         lcd.print("CIPSEND ERROR       ");
         return;
     } else {
-        lcd.clear();
         lcd.setCursor(0, 3);
-        lcd.print("CIPSEND OK");
+        lcd.print("CIPSEND OK          ");
     }
 
     delay(1000);
 
     // Sende den HTTP-Request
     Serial.print(getRequest);
-    lcd.clear();
     lcd.setCursor(0, 3);
-    lcd.print("send request:       ");
+    lcd.print("sending request     ");
 
     delay(1000);
 
     // Warten auf die Antwort
     if (!sendAT("","SEND OK",10000)) {
-        lcd.clear();
         lcd.setCursor(0, 3);
         lcd.print("SEND ERROR       ");
         return;
     }
-    /*
-    if (!sendAT("", "CLOSED", 10000)) {
-        lcd.clear();
-        lcd.setCursor(0, 3);
-        lcd.print("Fehler bei HTTP!    ");
-        return;
-    }
-    */
+
 
     // Verbindung schliessen, falls nicht automatisch geschehen
     delay(1000);
 
     if (!sendAT("AT+CIPCLOSE","ClOSED",5000)) {
-        lcd.clear();
         lcd.setCursor(0, 3);
         lcd.print("CLOSE ERROR         ");
     }
 
-    lcd.clear();
+
     lcd.setCursor(0, 3);
     lcd.print("Daten gesendet!  :) ");
 
@@ -372,5 +353,5 @@ void anzeigeDisplay(float temperatur, float feuchtigkeit, float luftdruck) {
     lcd.print(" bar");
     // Zeile 4
     //lcd.setCursor(0, 3);
-    //lcd.print(antwortESP01);
+    //lcd.print();
 }
