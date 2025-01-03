@@ -63,7 +63,7 @@ Aufgrund des fehlerhaften Verhaltens des SIM7600G-H Moduls wurde entschieden, di
 
 #### ESP01S
 - Das ESP01S reagiert extrem sensibel auf Spannungsschwankungen. Ein Arduino ist nicht in der Lage stabile 3.3V auszugeben, weshalb ein externes Netzteil benötigt wird.
-- Der ESP01S ist nach der Ausführung eines AT Commands nicht in der Lage sofort einen neuen Befehl auszuführen. Je nach Befehl wird unterschiedlich viel Zeit benötigt, bis der Controller wieder Ansprechbar ist.
+- Der ESP01S ist nach der Ausführung eines AT Commands nicht in der Lage sofort einen neuen Befehl auszuführen. Je nach Befehl wird unterschiedlich viel Zeit benötigt bis der Controller wieder ansprechbar ist.
 
 #### BME680 Sensor
 Der Sensor benötigt zwischen 3.3 bis 5 Volt Betriebsspannung und einen 3.3V Bus. Gemäss dem Hersteller des Sensormoduls geht ein normaler 5V Bus. Dies ist aber ganz klar nicht der Fall. Bei einem 5V Bus ist der Sensor nicht ansprechbar. Es wird dementsprechend ein Level Converter benötigt.
