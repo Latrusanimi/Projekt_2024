@@ -49,6 +49,7 @@ void anzeigeDisplay(float temperatur, float feuchtigkeit, float luftdruck);
 bool softwareDebuggingMode = false;
 bool debuggingMode = false;
 
+
 void setup() {
     // write your initialization code here
 
@@ -161,6 +162,7 @@ void loop() {
 
 }
 
+
 void verbindungWlan() {
     // WLAN Verbindung herstellen
 
@@ -189,6 +191,7 @@ void verbindungWlan() {
     lcd.setCursor(0,3);
     lcd.print("WLAN Verbunden      ");
     }
+
 
 bool sendAT(const char* befehl, const char* antwortErwartet, unsigned long timeout) {
     // Funktion um AT Befehle auszuführen
