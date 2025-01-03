@@ -54,7 +54,7 @@ Beim Projekt traten mehrere Probleme auf. Nicht alle davon konnten zufriedenstel
 Folgende Probleme traten auf:
 
 #### SIM7600G-H Modul
-Das SIM7600G-H Modul scheint einen technischen defekt, oder eine fehlerhafte Firmware zu besitzen. Folgende Fehler traten am Modul auf, welche mich zu dieser Annahme verleiten.
+Das SIM7600G-H Modul scheint einen technischen Defekt oder eine fehlerhafte Firmware zu besitzen. Folgende Fehler traten am Modul auf, welche mich zu dieser Annahme verleiten.
 - Die Verbindung SIM7600G-H zu Arduino funktionierte weder über Software Serial, noch Hardware Serial
 - Das SIM7600G-H Modul speichert Einstellungen wie zum Beispiel Baudrate nicht. Dies obwohl es auf den Speicherbefehl mit ok antwortet.
 - Einzelne AT Commands werden teilweise nicht ausgeführt. Dies obwohl sie gemäss Herstellerdokumentation die, für diese Firmware Version, passenden Commands wären.
