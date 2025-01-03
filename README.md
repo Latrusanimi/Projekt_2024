@@ -80,7 +80,9 @@ Ohne kostenpflichtiges Abo ist ThingSpeak nur sehr begrenzt nutzbar. Bilddaten k
 Mit kostenpflichtigem Abo können zwar Bilder hochgeladen werden, Jedoch sind pro Datei nur 5MB zulässig und das Bild muss als JPEG vorliegen. Rohdaten, zB von meinem Arduino, können nicht verarbeitet werden.
 
 ### Lösung
-ggdg
+Die Aufgabenstellung wurde in mehrere Unterkategoprien einegteilt. Zuerst wurde Das 2004 I2C LCD implementiert. Die Ursprüngliche Library von Adafruit wurde wegen inkompatibiltäten verworfen und stattdessen die mir schon bekannte Library von Marco Schwartz verwendet.
+Aufgrund der Fehlinformation über die Busspannung am Bosch BME680 Sensormodul von Waveshare, wurde der Fehler lange Zeit im Code, beziehungsweise der Library von Adafruit gesucht. Dank ChatGPT kam ich auf die Lösung, dass der Arduino Nano eine I2C Busspannung von 5V liefert, der Sensor aber nur mit 3,3V Busspannung umgehen kann. Die meine Lösung für das Problem, war ein bidirektionaler Level-Shifter, welchen ich noch herumliegen hatte. Da ich mehrere verschiedene Level Shifter in meinem Fundus habe, konnte ich mehrere Level-Shifter austesten und habe mich dann aufgrund der Möglichkeit, mehrere unterschiedliche Signale getrennt zu shiften für einen No-Name 8 Kanal Level-Shifter entschieden. Da ich nicht wusste, ob der eingesetzte Sensor von Waveshare noch funktionierend war, habe ich für den Funktionstest mit dem Level-Shifter ein CJMCU680 Modul eingesetzt, welches ein chinesisches Konck-Off des BME680 Sensors ist. 
+
 
 ## Eingesetztes Material
 Für die Lösung wurde mehreres Material eingesetzt. Nicht alles davon hat es in die endgültige Lösung geschafft. In der Das eingesetzte Material und dessen Verwendung ist in der Nachfolgenden Tabelle gelistet.
@@ -91,7 +93,7 @@ Für die Lösung wurde mehreres Material eingesetzt. Nicht alles davon hat es in
 |2004 I2C LCD|x||x||
 |SIM7600G-H Modem|x|||x|
 |ESP01S WLAN Modul||x|x||
-|Level Shifter||x|x||
+|8 Ch Level Shifter||x|x||
 |RTC DS1302|x|||x|
 |externes Netzteil||x|x||
 |HW-140 DC-DC Converter|x||x||
@@ -182,6 +184,8 @@ https://www.tutorials.at/c/11-zeiger.html
 https://docs.arduino.cc/learn/communication/wire/
 
 https://www.waveshare.com/wiki/Bme680#Software
+
+https://learn.sparkfun.com/tutorials/bi-directional-logic-level-converter-hookup-guide/all
 
 
 ### Youtube Videos
