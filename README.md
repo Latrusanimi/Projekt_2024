@@ -9,9 +9,9 @@
 - [Funktionstest](#funktionstest)
 - [Video](#video)
 - [Quellenangabe](#quellenangabe)
--  [Verwendete Dokumente](#verwendete_dokumente)
--  [Verwendete Websiten](#verwendete_websiten)
--  [Verwendete Youtube Videos](#verwendete_youtube_videos)
+-   [Dokumente](#dokumente)
+-   [Webseiten](#webseiten)
+-   [Youtube Videos](#youtube-videos)
 
 ## Ausgangslage
 Ipsum Lorem
@@ -42,10 +42,10 @@ sfdsfsd
 fsfges
 
 ## Quellenangabe
-### Verwendete Dokumente
+### Dokumente
 dfgdfgd
 
-### Verwendete Websiten
+### Webseiten
 eesgd
-### Verwendete Youtube Videos
+### Youtube Videos
 fsse
