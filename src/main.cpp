@@ -55,7 +55,7 @@ void setup() {
 
 
     // Debugging Mode extern forcieren
-    if (PIN5 == LOW) {
+    if (digitalRead(5) == LOW) {
         debuggingMode = true;
     } else {
         debuggingMode = softwareDebuggingMode;
@@ -125,7 +125,7 @@ void loop() {
     // write your code here
 
     // Debugging Mode extern forcieren
-    if (PIN5 == LOW) {
+    if (digitalRead(5) == LOW) {
         debuggingMode = true;
     } else {
         debuggingMode = softwareDebuggingMode;
