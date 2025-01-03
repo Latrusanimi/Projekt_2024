@@ -139,10 +139,10 @@ Für die Lösung wurde mehreres Material eingesetzt. Nicht alles davon hat es in
 |Anzeigen der momentanen Werte, aber ein Versenden dieser nur alle 60 Sekunden.|Im Main wurde mit millis() gearbeitet. Auf ThingSpeak wird angezeigt, wann die letzten Daten angekommen sind.|x|
 
 ## Video
-## Normaler Modus
+### Normaler Modus
 dfsg
 
-## Debugging Modus
+### Debugging Modus
 fggg
 
 ## Quellenangabe
