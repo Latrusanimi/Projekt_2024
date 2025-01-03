@@ -123,7 +123,7 @@ fggg
 ### Dokumente
 [RTC Modul](/AZ219_C8-4_DE_B07WS84H44.pdf)
 
-[SIM7600G-H AT Commands](/SIM7500_SIM7600 Series_AT Command Manual_V3.00.pdf)
+[SIM7600G-H AT Commands](/SIM7500_SIM7600_Series_AT_Command_Manual_V3.00.pdf)
 
 ### Webseiten
 https://www.waveshare.com/wiki/SIM7600G-H_4G_Module#Datasheet
