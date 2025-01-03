@@ -130,7 +130,13 @@ Für die Lösung wurde mehreres Material eingesetzt. Nicht alles davon hat es in
 |16 Mb Flash Speicher||x|||
 
 ## Funktionstest
-sfdsfsd
+|Funktion|Wie wurde getestet?|Funktion erfüllt|
+|-|-|-|
+|Verbindung zu WLAN herstellen|Während dem Aufstarten gibt das LCD eine Rückmeldung bei erfolgreicher Verbindung. Zusätzlich ist auf dem Laptop ersichtlich, ob sich das Modem im Netzwerk angemeldet hat.|x|
+|Messung der Umweltdaten mittels BME680 Sensor|Die Messergebnisse werden dauerhaft auf dem LCD ausgegeben.|x|
+|Senden der Daten an ThingSpeak|Auf dem ThingSpeak Server werden die Daten angezeigt.|x|
+|Korrekte Funktion des Ablaufs|Es wurden umfangreiche Debugging Massnahmen ergriffen. Jeder Befehl hat ein Timeout hinterlegt, dazu wird bei Fehlern Fehlermeldungen ausgegeben und im Debugging Modus werden sämtliche Rückmeldungen angezeigt.|x|
+|Anzeigen der momentanen Werte, aber ein Versenden dieser nur alle 60 Sekunden.|Im Main wurde mit millis() gearbeitet. Auf ThingSpeak wird angezeigt, wann die letzten Daten angekommen sind.|x|
 
 ## Video
 ## Normaler Modus
