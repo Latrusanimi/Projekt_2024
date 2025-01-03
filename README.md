@@ -88,6 +88,10 @@ Das SIM7600G-H Modem hat mir am meisten Probleme bereitet. Es war lange nicht kl
 Als Ersatz kam ein ESP01S zum Einsatz, welcher als WLAN Modul eingesetzt wurde.
 
 Der ESP01S hat wie auch der BME680 eine 3.3V Schnittstelle. Da ich schon für den I2C Bus einen 8 Kanal Level Shifter im Einsatz habe, konnte ich einfach einen anderen Kanal für die serielle Kommunikation nutzen.
+Etwas komplizierter war es die Spannungsversorgung sicherzustellen. Der ESP01S benötigt eine stabile 3,3V Spannungsversorgung. Der Arduino besitzt zwar einen 3,3V Ausgang, dieser ist jedoch niocht stabilisiert. Als Lösung habe ich vom HW-140 DC-DC Converter, welcher schon die 3,3V für den Level-Shifter liefert, eine Leitung abgezweigt.
+Das der ESP01S nach dem Ausführen eines AT Commands nicht sofort wieder Empfangsbereit ist, führte zu einem Timing Problem. Die Reihenfolge und das Timing der AT Commands musste perfektioniert werden. Um sicher zu gehen, dass der Arduinonicht aus versehen etwas anderes ausführt, wurde beim Senden auf die Funktion millis() verzichtet und stattdessen delay() eingesetzt. Die korrekten Wartezeiten mussten via Trial and Error eruiert werden. Jegliche Manipulatuion am Code kann hier zu einem unerwarteten Ergebnis führen. Vor dem Senden der Daten, wollte ich eine überprüfung des WLAN Statuses durchführen und gegebenenfalls die Verbindung erneut aufbauen. dies führte jedoch ale paar Zyklen zu einem CIPSEND Error. aus diesem Grund wurde im endgültigen Projekt auf die Überprüfung der Netzwerkverbindung verzichtet und nur ein Ansatz für eine spätere Version als auskommentierten Code im Main-File gelassen.
+
+
 
 ## Eingesetztes Material
 Für die Lösung wurde mehreres Material eingesetzt. Nicht alles davon hat es in die endgültige Lösung geschafft. In der Das eingesetzte Material und dessen Verwendung ist in der Nachfolgenden Tabelle gelistet.
@@ -101,7 +105,7 @@ Für die Lösung wurde mehreres Material eingesetzt. Nicht alles davon hat es in
 |8 Ch Level Shifter||x|x||
 |RTC DS1302|x|||x|
 |externes Netzteil||x|x||
-|HW-140 DC-DC Converter|x||x||
+|HW-140 DC-DC Converter||x|x||
 |OV7670 Kamera|x|||x|
 |16 Mb Flash Speicher||x|||
 
@@ -117,7 +121,8 @@ fggg
 
 ## Quellenangabe
 ### Dokumente
-dfgdfgd
+[RTC Modul](Projekt_2024/AZ219_C8-4_DE_B07WS84H44.pdf)
+[SIM7600G-H AT Commands](Projekt_2024/SIM7500_SIM7600 Series_AT Command Manual_V3.00.pdf)
 
 ### Webseiten
 https://www.waveshare.com/wiki/SIM7600G-H_4G_Module#Datasheet
