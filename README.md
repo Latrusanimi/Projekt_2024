@@ -12,6 +12,7 @@
     - [Arduino Nano](#arduino-nano)
     - [ThingSpeak](#thingspeak)
   - [Lösung](#lösung)
+- [Eingesetztes Material](#eingesetztes-material)
 - [Funktionstest](#funktionstest)
 - [Video](#video)
   - [Normaler Modus](#normaler-modus)
@@ -79,7 +80,23 @@ Ohne kostenpflichtiges Abo ist ThingSpeak nur sehr begrenzt nutzbar. Bilddaten k
 Mit kostenpflichtigem Abo können zwar Bilder hochgeladen werden, Jedoch sind pro Datei nur 5MB zulässig und das Bild muss als JPEG vorliegen. Rohdaten, zB von meinem Arduino, können nicht verarbeitet werden.
 
 ### Lösung
-gdghdfhdh
+ggdg
+
+## Eingesetztes Material
+Für die Lösung wurde mehreres Material eingesetzt. Nicht alles davon hat es in die endgültige Lösung geschafft. In der Das eingesetzte Material und dessen Verwendung ist in der Nachfolgenden Tabelle gelistet.
+| Material | Geplannt | Ungeplannt | Final eingesetzt | Verworfen wegen Problemen |
+|----------|----------|------------|------------------|---------------------------|
+|Arduino Nano|x||x||
+|Bosch BME680|x||x||
+|2004 I2C LCD|x||x||
+|SIM7600G-H Modem|x|||x|
+|ESP01S WLAN Modul||x|x||
+|Level Shifter||x|x||
+|RTC DS1302|x|||x|
+|externes Netzteil||x|x||
+|HW-140 DC-DC Converter|x||x||
+|OV7670 Kamera|x|||x|
+|16 Mb Flash Speicher||x|||
 
 ## Funktionstest
 sfdsfsd
