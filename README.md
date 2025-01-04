@@ -24,7 +24,7 @@
 
 ## Ausgangslage
 In meinem Hobbyraum sind die Umweltbedingungen nicht immer ideal.
-Trotz mehrerer fest installierten Heizkörper erreicht der Raum im Winter selten Temperaturen über 19°C.
+Trotz mehrerer fest installierter Heizkörper erreicht der Raum im Winter selten Temperaturen über 19°C.
 Ebenfalls ist die Luft sehr trocken. Da ich in meinem Hobbyraum zwei 3D Drucker stehen habe, ist mir die Überwachung der Drucker wichtig.
 Dazu benötige ich die Umweltdaten des Raums und wenn möglich ein Bild des Druckkopfs. Mit dem Projekt in Informatik möchte ich mir die benötigten Grundlagen aneignen, um dies später in einer verbesserten Version funktionstüchtig zu haben.
 
