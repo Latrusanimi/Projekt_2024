@@ -143,7 +143,7 @@ Für die Lösung wurde mehreres Material eingesetzt. Nicht alles davon hat es in
 [![Video Normaler Modus](https://youtu.be/XiYQmWm--yM)](https://youtu.be/XiYQmWm--yM)
 
 ### Debugging Modus
-fggg
+[![Video Debugging Modus](https://youtu.be/bOlLLAwx9Jg)](https://youtu.be/bOlLLAwx9Jg)
 
 ## Quellenangabe
 ### Dokumente
