@@ -39,7 +39,7 @@ Dazu benötige ich die Umweltdaten des Raums und wenn möglich ein Bild des Druc
 |Kamerabild (Kamera OV7670) aufnehmen und auf Empfangsgerät anzeigen.|| x |
 
 ## Flussdiagramm
-kkkkkk
+![Flussdiagramm](/Flussdiagramm.png)
 
 ## Lösungsansatz
 Ich möchte mit einem Arduino Nano einen BME680 Sensor von Bosch auslesen und die Daten dann auf ThingSpeak hochladen.
