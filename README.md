@@ -59,6 +59,7 @@ Das SIM7600G-H Modul scheint einen technischen Defekt oder eine fehlerhafte Firm
 - Das SIM7600G-H Modul speichert Einstellungen wie zum Beispiel Baudrate nicht. Dies, obwohl es auf den Speicherbefehl mit ok antwortet.
 - Einzelne AT Commands werden teilweise nicht ausgeführt. Dies obwohl sie gemäss Herstellerdokumentation die, für diese Firmware Version, passenden Commands wären.
 - Zeitweise friert das Modul einfach ein und nur ein Hardware-Reset löst das Problem. Dieses Einfrieren kann zu jeder Zeit erfolgen. Ich war nicht in der Lage eine Ursache zu finden.
+
 Aufgrund des fehlerhaften Verhaltens des SIM7600G-H Moduls wurde entschieden, dieses nicht zu verwenden und stattdessen auf ein WLAN Modul zu wechseln.
 
 #### ESP01S
