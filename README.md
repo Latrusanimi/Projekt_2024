@@ -73,7 +73,8 @@ Der Sensor benötigt zwischen 3.3 bis 5 Volt Betriebsspannung und einen 3.3V Bus
 Der Arduino hat mehrere Probleme, welche aber seinem Alter als Mikrocontroller geschuldet sind.
 Der Arduino kann kein keinen stabilen Software Serial mit einer Baudrate höher als 38400 Baud erzeugen. Bei einer Baudrate von 57600 Baud und höher, wird der Bus instabil.
 Der Hardware Serial ist stabiler. Ab einer Baudrate von mehr als 115200 Baud muss jedoch auch hier mit verlorenen Daten gerechnet werden, da der Bus instabil wird.
-Ein weiteres Problem des Arduinos ist seine Leistungsfähigkeit im Allgemeinen. Im Projekt habe ich einen etwas längeren String gehabt, bei welchem der Arduino die Bytes hätte zählen müssen. Dazu war der Arduino nicht in der Lage. Der String musste in einzelne Snippets zerteilt werden und nach und nach die Bytes gezählt und aufsummiert werden. 
+
+Ein weiteres Problem des Arduinos ist seine Leistungsfähigkeit im Allgemeinen. Im Projekt habe ich einen etwas längeren String gehabt, bei welchem der Arduino die Bytes hätte zählen müssen. Dazu war der Arduino nicht in der Lage. Der String musste in einzelne Snippets zerteilt werden und nach und nach aufgebaut werden. Erst dannach konnten die Bytes gezählt werden. 
 Aufgrund des begrenzten Speichers, des begrenzten RAM und der geringen Taktrate ist der Arduino nicht in der Lage, das Bild einer OV7670 Kamera auszulesen und als Bild abzuspeichern. Das Bild muss als Rohdaten in einem externen Speicher zwischengespeichert werden und dann mit einem externen Programm, zB auf einer Website, in ein JPEG umgewandelt werden.
 
 #### ThingSpeak
