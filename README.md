@@ -50,7 +50,7 @@ Die Daten werden entweder mittels einem SIM7600G-h Modem oder einem ESP01S WLAN-
 Der aktuelle Programmschritt, oder allfällige Fehler während dem Senden werden ebenfalls auf dem Display angezeigt.
 
 ### Probleme
-Beim Projekt traten mehrere Probleme auf. Nicht alle davon konnten zufriedenstellend gelöst werden.
+Beim Projekt traten mehrere Probleme auf. Leider konnten nicht alle davon zufriedenstellend gelöst werden. Es wurde jedoch immer eine alternative Lösung gefunden.
 Folgende Probleme traten auf:
 
 #### SIM7600G-H Modul
