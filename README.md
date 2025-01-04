@@ -140,7 +140,7 @@ Für die Lösung wurde mehreres Material eingesetzt. Nicht alles davon hat es in
 
 ## Video
 ### Normaler Modus
-dfsg
+[![Video Normaler Modus](https://youtu.be/XiYQmWm--yM)](https://youtu.be/XiYQmWm--yM)
 
 ### Debugging Modus
 fggg
