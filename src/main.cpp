@@ -26,11 +26,14 @@ Adafruit_BME680 bme680;
 LiquidCrystal_I2C lcd(0x27,20,4);
 
 // WLAN Daten
-const char* ssid = "Projekt";
-const char* password = "C505v33p";
+// ??? ist durch den Netzwerknamen zu ersetzen
+const char* ssid = "???";
+// ??? ist mit dem Passwort des Netzwerks zu ersetzen 
+const char* password = "???";
 
 // ThingSpeak API Keys
-const char* api_key_bme680 = "VFNZDUII0ENDF526";  // Sicherheitsrisiko, da API Key unverschlüssselt. in einer späteren Version anzupassen
+// ??? ist durch den API Key des Kanals auf Thingspeak zu ersetzen
+const char* api_key_bme680 = "???";  // Sicherheitsrisiko, da API Key unverschlüssselt. in einer späteren Version anzupassen
 // URL Thingspeak
 const char* url_bme680 = "http://api.thingspeak.com/update";
 
